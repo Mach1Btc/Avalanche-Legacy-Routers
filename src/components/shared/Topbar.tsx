@@ -1,4 +1,4 @@
-import { ConnectButton } from '@/components/shared';
+import { ConnectButton, ThemeToggle } from '@/components/shared';
 import { NavLink } from 'react-router-dom';
 
 const Topbar = () => {
@@ -21,7 +21,7 @@ const Topbar = () => {
                     <NavLink to="/Uniswap" className='topbar-link'>Uniswap</NavLink>
                 </div>
                 <div className='connect-and-theme-button-wrapper'>
-                    {/* <ThemeToggle /> */}
+                    <ThemeToggle />
                     <ConnectButton />
                 </div>
             </div>

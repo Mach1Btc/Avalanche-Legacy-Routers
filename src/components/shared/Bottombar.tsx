@@ -31,7 +31,7 @@ const Bottombar = () => {
             </div>
 
             {/* Creator credit and social links */}
-            <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 flex items-center gap-2 pb-2 text-xxs sm:text-xs text-gray-600">
+            <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 flex items-center gap-2 pb-2 text-xxs sm:text-xs text-gray-600 dark:text-gray-200">
                 <span>Made by @Mach1___</span>
                 <div className="flex gap-2">
                     <a href="https://x.com/Mach1___" target="_blank" rel="noopener noreferrer" className="hover:text-gray-400 transition-colors">
