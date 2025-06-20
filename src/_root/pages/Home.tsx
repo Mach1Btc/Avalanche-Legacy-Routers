@@ -7,7 +7,7 @@ const Home = () => {
                 {/* LFJ Button */}
                 <Link
                     to="/LFJ"
-                    className="group relative overflow-hidden rounded-lg shadow-gray-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                    className="group home-display-card"
                 >
                     <img
                         src="/assets/LFGLogo.png"
@@ -27,7 +27,7 @@ const Home = () => {
                 {/* PHARAOH Button */}
                 <Link
                     to="/PHARAOH"
-                    className="group relative overflow-hidden rounded-lg shadow-gray-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                    className="group home-display-card"
                 >
                     <img
                         src="/assets/PharaohLogo.png"
@@ -47,7 +47,7 @@ const Home = () => {
                 {/* Arena Button */}
                 <Link
                     to="/Arena"
-                    className="group relative overflow-hidden rounded-lg shadow-gray-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                    className="group home-display-card"
                 >
                     <img
                         src="/assets/ArenaLogo.svg"
@@ -67,7 +67,7 @@ const Home = () => {
                 {/* Pangolin Button */}
                 <Link
                     to="/Pangolin"
-                    className="group relative overflow-hidden rounded-lg shadow-gray-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                    className="group home-display-card"
                 >
                     <img
                         src="/assets/PangolinLogo.svg"
@@ -87,7 +87,7 @@ const Home = () => {
                 {/* Uniswap Button */}
                 <Link
                     to="/Uniswap"
-                    className="group relative overflow-hidden rounded-lg shadow-gray-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                    className="group home-display-card"
                 >
                     <img
                         src="/assets/UniswapLogo.png"

@@ -10,7 +10,7 @@ import "@rainbow-me/rainbowkit/styles.css";
 import { Web3Provider } from '@/context/Web3Context';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <ThemeProvider attribute="class" defaultTheme='light' forcedTheme='light'>
+  <ThemeProvider attribute="class" defaultTheme='light'>
     <Web3Provider>
       <BrowserRouter>
         <AuthProvider>

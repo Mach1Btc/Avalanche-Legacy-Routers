@@ -1,6 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 
-import './globals.css'
+import './globals.css';
 import RootLayout from '@/_root/RootLayout';
 import { Arena, Home, LFJ, NotFound, Pangolin, PHARAOH, Uniswap } from '@/_root/pages';
 import { Toaster } from "@/components/ui/sonner";

@@ -477,7 +477,7 @@ const UniswapSwapPanel = () => {
                                 <Input
                                     type="number"
                                     placeholder="0.0"
-                                    className='bg-white no-arrows mr-2 border-0 text-2xl'
+                                    className='amount-input no-arrows'
                                     autoComplete="off"
                                     value={fromAmountInputValue}
                                     onChange={(e) => handleFromInputChange(e.target.value)}
@@ -498,7 +498,7 @@ const UniswapSwapPanel = () => {
                             <div className='relative'>
                                 <Separator className='my-4 seperator' />
                                 <div
-                                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-white rounded-full flex items-center justify-center cursor-pointer"
+                                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-white dark:bg-dark-2 rounded-full flex items-center justify-center cursor-pointer transition-colors"
                                     onClick={switchToAndFrom}
                                 >
                                     <FaChevronDown className="text-gray-400 text-xl pt-1" />
@@ -508,7 +508,7 @@ const UniswapSwapPanel = () => {
                                 <Input
                                     type="number"
                                     placeholder="0.0"
-                                    className='bg-white no-arrows mr-2 border-0 text-2xl'
+                                    className='amount-input no-arrows'
                                     autoComplete="off"
                                     value={toAmountInputValue}
                                     onChange={(e) => handleToInputChange(e.target.value)}
@@ -527,8 +527,8 @@ const UniswapSwapPanel = () => {
                                         <PopoverTrigger asChild>
                                             <FaCog className='text-gray-400 text-sm ml-1 hover:cursor-pointer' />
                                         </PopoverTrigger>
-                                        <PopoverContent align='start' alignOffset={-10} side='bottom' sideOffset={14} className='bg-white border-0 shadow-lg duration-300'>
-                                            <div className='flex flex-col gap-2 bg-white items-center justify-center'>
+                                        <PopoverContent align='start' alignOffset={-10} side='bottom' sideOffset={14} className='bg-white dark:bg-dark-2 border-0 shadow-lg duration-300'>
+                                            <div className='flex flex-col gap-2 bg-white dark:bg-dark-2 items-center justify-center'>
                                                 <div className='flex flex-row gap-2 items-center justify-between'>
                                                     <Switch
                                                         className={supportFeeTokens ? "bg-cash-green" : "bg-error-red"}
