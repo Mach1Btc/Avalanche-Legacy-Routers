@@ -5,21 +5,21 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
-import { Loader, SlippageInput, SwapInfo, TokenSearchChooser } from '@/components/shared';
+import { Loader, SlippageInput, TokenSearchChooser, SwapInfo } from '@/components/shared';
 import { Separator } from '@/components/ui/separator';
-import { Switch } from "@/components/ui/switch"
+import { Switch } from "@/components/ui/switch";
 import BN from 'bn.js';
-import { defaultSlippage, explorer_url, ARENA_TRADE_ROUTER_ADDRESS, safeModeEnabledMaxSlippage, WAVAX_ADDRESS } from '@/lib/constants';
+import { defaultSlippage, explorer_url, BLACKHOLE_ROUTER_ADDRESS, safeModeEnabledMaxSlippage, WAVAX_ADDRESS } from '@/lib/constants';
 import { Token } from '@/lib/types';
 import { formatBN, scaleToBN } from '@/lib/utils';
 import { useUserContext } from '@/context/AuthContext';
 import { approveERC20Amount, getERC20Allowance, importNewERC20Token } from '@/lib/ERC20';
 import { toast } from "sonner"
 import { WrapUtils } from '@/lib/WAVAX';
-import { createSwapTransaction, getAmountIn, getAmountOut, getPairAddressFor } from '@/lib/ArenaTrade';
+import { getAmountOut, createSwapTransaction, getPairAddressFor } from '@/lib/Blackhole';
 
 
-const ArenaSwapPanel = () => {
+const BlackholeSwapPanel = () => {
 
     const {
         account,
@@ -39,6 +39,7 @@ const ArenaSwapPanel = () => {
         setWasFromLastChanged } = useUserContext();
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
+
     const { openConnectModal } = useConnectModal();
 
     const [fromAmount, setFromAmount] = useState<BN>(new BN(0));
@@ -53,7 +54,7 @@ const ArenaSwapPanel = () => {
     const [amountOutComputed, setAmountOutComputed] = useState<BN>(new BN(0));
     const [amountInComputed, setAmountInComputed] = useState<BN>(new BN(0));
 
-    const [isFromAmountExact, setIsFromAmountExact] = useState<boolean>(true);
+    const [isFromAmountExact, setIsFromAmountExact] = useState<boolean>(true); // ALWAY true on Blackhole, but kept for consistency
 
     const [allowedSlippage, setAllowedSlippage] = useState<number>(defaultSlippage);
     const [safeModeEnabled, setSafeModeEnabled] = useState<boolean>(true);
@@ -61,6 +62,8 @@ const ArenaSwapPanel = () => {
 
     const [extraSettingsOpen, setExtraSettingsOpen] = useState<boolean>(false);
     const [supportFeeTokens, setSupportFeeTokens] = useState<boolean>(false);
+
+    const [useStablePool, setUseStablePool] = useState<boolean>(false);
 
     const [debounceTimer, setDebounceTimer] = useState<NodeJS.Timeout | null>(null);
 
@@ -74,6 +77,7 @@ const ArenaSwapPanel = () => {
         setFromAmount(new BN(0));
         setToAmount(new BN(0));
     }
+
 
     const handleFromInputChange = (value: string) => {
         setIsLoading(true);
@@ -101,31 +105,33 @@ const ArenaSwapPanel = () => {
         setDebounceTimer(newTimer);
     };
 
-    const handleToInputChange = (value: string) => {
-        setIsLoading(true);
-        setFromAmount(new BN(0));
-        if (!isNaN(Number(value)) || value === '') {
-            setToAmountInputValue(value);
-            if (value === '') {
-                setToAmount(new BN(0));
-                setFromAmountInputValue('');
-                setIsLoading(false);
-                return;
-            }
-            setIsFromAmountExact(false);
-        }
+    // const handleToInputChange = (value: string) => {
+    //     return
+    //     // setIsLoading(true);
+    //     // setFromAmount(new BN(0));
+    //     // if (!isNaN(Number(value)) || value === '') {
+    //     //     setToAmountInputValue(value);
+    //     //     if (value === '') {
+    //     //         setToAmount(new BN(0));
+    //     //         setFromAmountInputValue('');
+    //     //         setIsLoading(false);
+    //     //         return;
+    //     //     }
+    //     //     setIsFromAmountExact(false);
+    //     // }
 
-        if (debounceTimer) {
-            clearTimeout(debounceTimer);
-        }
-        const newTimer = setTimeout(async () => {
-            if (!isNaN(Number(value)) && value !== '') {
-                setToAmount(scaleToBN(value, toToken.decimals));
-            }
-        }, 1000);
+    //     // if (debounceTimer) {
+    //     //     clearTimeout(debounceTimer);
+    //     // }
+    //     // const newTimer = setTimeout(async () => {
+    //     //     if (!isNaN(Number(value)) && value !== '') {
+    //     //         setToAmount(scaleToBN(value, toToken.decimals));
+    //     //     }
+    //     // }, 1000);
 
-        setDebounceTimer(newTimer);
-    };
+    //     // setDebounceTimer(newTimer);
+    // };
+
 
 
     const switchToAndFrom = () => {
@@ -135,7 +141,6 @@ const ArenaSwapPanel = () => {
         setLastToToken(lastFromToken);
         setFromToken(tempToToken);
         setLastFromToken(tempLastToToken);
-        setFromTokenAllowance(new BN(0));
     };
 
     const onFromTokenChange = (value: Token) => {
@@ -155,21 +160,15 @@ const ArenaSwapPanel = () => {
             toast.error("Please connect your wallet to swap tokens.");
             return;
         }
-
         if (fromAmount.isZero() && toAmount.isZero()) {
             return;
         }
-
         const isWrapOperation = WrapUtils.isWrapOperation(fromToken, toToken);
-
         const requiredAllowance = isFromAmountExact
             ? fromAmount
             : amountInComputed.mul(new BN(100 + allowedSlippage)).div(new BN(100));
-
         const hasEnoughAllowance = isWrapOperation || fromTokenAllowance.gte(requiredAllowance);
-
         setIsLoading(true);
-
         try {
             if (hasEnoughAllowance) {
                 await executeSwap(isWrapOperation, account.address);
@@ -182,10 +181,8 @@ const ArenaSwapPanel = () => {
         }
     };
 
-    // Helper function for executing the actual swap
     const executeSwap = async (isWrapOperation: boolean, accountAddress: string): Promise<void> => {
         let result: { success: boolean; txHash?: string };
-
         if (isWrapOperation) {
             const amount = WrapUtils.getWrapAmount(fromAmount, toAmount, isFromAmountExact);
             result = await WrapUtils.executeWrapOperation(fromToken, toToken, accountAddress, amount);
@@ -194,10 +191,12 @@ const ArenaSwapPanel = () => {
                 accountAddress,
                 fromToken.address,
                 toToken.address,
+                currentPairAddress,
                 true,
                 fromAmount,
                 amountOutComputed,
                 allowedSlippage,
+                useStablePool,
                 supportFeeTokens
             );
         } else {
@@ -205,21 +204,22 @@ const ArenaSwapPanel = () => {
                 accountAddress,
                 fromToken.address,
                 toToken.address,
+                currentPairAddress,
                 false,
                 amountInComputed,
                 toAmount,
                 allowedSlippage,
+                useStablePool,
                 supportFeeTokens
             );
         }
-
         handleTransactionResult(result, "Swap");
     };
 
     // Helper function for token approval
     const approveTokens = async (requiredAllowance: any): Promise<void> => {
         const result = await approveERC20Amount(
-            ARENA_TRADE_ROUTER_ADDRESS,
+            BLACKHOLE_ROUTER_ADDRESS,
             fromToken.address,
             requiredAllowance
         );
@@ -277,35 +277,42 @@ const ArenaSwapPanel = () => {
         }
     };
 
+    const getPairType = () => {
+        if (!currentPairExists) {
+            return "NA";
+        }
+        if (WrapUtils.isWrapOperation(fromToken, toToken)) {
+            return WrapUtils.isWrapping(fromToken, toToken) ? "wrapping" : "unwrapping";
+        } else {
+            return useStablePool ? "stable" : "volatile";
+        }
+    };
+
     const handleTokenImport = async (address: string) => {
         console.log("Import Token: ", address);
         const retrivedToken = await importNewERC20Token(address);
         return retrivedToken;
     }
 
-    const generatePairKey = (tokenA: string, tokenB: string): string => {
+    const generatePairKey = (tokenA: string, tokenB: string, stable: boolean): string => {
         // Sort addresses to ensure consistent key regardless of order
         const sortedTokens = [tokenA.toLowerCase(), tokenB.toLowerCase()].sort();
-        return `${sortedTokens[0]},${sortedTokens[1]}`;
+        return `${sortedTokens[0]},${sortedTokens[1]},${stable}`;
     };
 
-    const checkAndCachePairAddress = async (tokenInAddress: string, tokenOutAddress: string): Promise<void> => {
+    const checkAndCachePairAddress = async (tokenInAddress: string, tokenOutAddress: string, stable: boolean): Promise<void> => {
         const adjustedTokenIn = WrapUtils.normalizeAddress(tokenInAddress);
         const adjustedTokenOut = WrapUtils.normalizeAddress(tokenOutAddress);
-
-        const pairKey = generatePairKey(adjustedTokenIn, adjustedTokenOut);
-
+        const pairKey = generatePairKey(adjustedTokenIn, adjustedTokenOut, stable);
         if (pairMap.has(pairKey)) {
             const cachedAddress = pairMap.get(pairKey)!;
             setCurrentPairAddress(cachedAddress);
             setCurrentPairExists(cachedAddress !== '');
             return;
         }
-
-        const fetchedPairAddress = await getPairAddressFor(adjustedTokenIn, adjustedTokenOut);
+        const fetchedPairAddress = await getPairAddressFor(adjustedTokenIn, adjustedTokenOut, stable);
         const pairExists = fetchedPairAddress !== null;
         const addressToStore = pairExists ? fetchedPairAddress : '';
-
         setPairMap(prev => new Map(prev.set(pairKey, addressToStore)));
         setCurrentPairAddress(addressToStore);
         setCurrentPairExists(pairExists);
@@ -323,7 +330,7 @@ const ArenaSwapPanel = () => {
     const hasEnoughAllowance = fromTokenAllowance.gte(requiredAllowance);
 
     const getButtonText = () => {
-        if (isLoading) return <div className="flex w-full items-center justify-center"><Loader /></div>;
+        if (isLoading) return <div className="flex w-full items-center justify-center"><Loader className='invert' /></div>;
         if (!currentPairExists) return "Pair Not Found";
         if (!isConnected || !account.address) return "Connect";
 
@@ -361,16 +368,13 @@ const ArenaSwapPanel = () => {
     useEffect(() => {
         const getOutputAmount = async () => {
             if (WrapUtils.isWrapOperation(fromToken, toToken) && fromAmount.gt(new BN(0))) {
-                setToAmountInputValue(formatBN(fromAmount, 18)); // WAVAX/AVAX always 18 decimals
+                setToAmountInputValue(formatBN(fromAmount, 18)); // always 18 for WAVAX or AVAX
                 setAmountOutComputed(fromAmount);
             } else if (fromAmount.gt(new BN(0))) {
-                const adjustedFromAddress = WrapUtils.normalizeAddress(fromToken.address);
-                const adjustedToAddress = WrapUtils.normalizeAddress(toToken.address);
-
-                const amountOut = await getAmountOut(adjustedFromAddress, adjustedToAddress, fromAmount);
-                if (amountOut !== null) {
-                    setToAmountInputValue(formatBN(amountOut, toToken.decimals));
-                    setAmountOutComputed(amountOut);
+                const result = await getAmountOut(fromToken.address === "0xAVAX" ? WAVAX_ADDRESS.toString() : fromToken.address, currentPairAddress, fromAmount);
+                if (result?.amountOut !== null) {
+                    setToAmountInputValue(formatBN(result.amountOut, toToken.decimals));
+                    setAmountOutComputed(result.amountOut);
                 }
             } else {
                 setToAmount(new BN(0));
@@ -380,7 +384,6 @@ const ArenaSwapPanel = () => {
             }
             setIsLoading(false);
         };
-
         if (isFromAmountExact) {
             getOutputAmount();
         }
@@ -389,17 +392,14 @@ const ArenaSwapPanel = () => {
     useEffect(() => {
         const getInAmount = async () => {
             if (WrapUtils.isWrapOperation(fromToken, toToken) && toAmount.gt(new BN(0))) {
-                setFromAmountInputValue(formatBN(toAmount, 18)); // WAVAX/AVAX always 18 decimals
+                setFromAmountInputValue(formatBN(toAmount, 18)); // always 18 for WAVAX or AVAX
                 setAmountInComputed(toAmount);
             } else if (toAmount.gt(new BN(0))) {
-                const adjustedFromAddress = WrapUtils.normalizeAddress(fromToken.address);
-                const adjustedToAddress = WrapUtils.normalizeAddress(toToken.address);
-
-                const amountIn = await getAmountIn(adjustedFromAddress, adjustedToAddress, toAmount);
-                if (amountIn !== null) {
-                    setFromAmountInputValue(formatBN(amountIn, fromToken.decimals));
-                    setAmountInComputed(amountIn);
-                }
+                // const amountIn = await getAmountIn(fromToken.address === "0xAVAX" ? WAVAX_ADDRESS.toString() : fromToken.address, toToken.address === "0xAVAX" ? WAVAX_ADDRESS.toString() : toToken.address, toAmount, useStablePool);
+                // if (amountIn !== null) {
+                //     setFromAmountInputValue(formatBN(amountIn, fromToken.decimals));
+                //     setAmountInComputed(amountIn);
+                // }
             } else {
                 setFromAmount(new BN(0));
                 setFromAmountInputValue('');
@@ -408,7 +408,6 @@ const ArenaSwapPanel = () => {
             }
             setIsLoading(false);
         };
-
         if (!isFromAmountExact) {
             getInAmount();
         }
@@ -419,19 +418,17 @@ const ArenaSwapPanel = () => {
             if (!account.address) return;
 
             const needsAllowanceCheck = fromAmount.gt(new BN(0)) || amountInComputed.gt(new BN(0));
-
             if (WrapUtils.needsAllowance(fromToken.address) && needsAllowanceCheck) {
-                const allowance = await getERC20Allowance(account.address, ARENA_TRADE_ROUTER_ADDRESS, fromToken.address);
+                const allowance = await getERC20Allowance(account.address, BLACKHOLE_ROUTER_ADDRESS, fromToken.address);
                 if (allowance !== null) {
                     setFromTokenAllowance(allowance);
                 }
             } else if (!WrapUtils.needsAllowance(fromToken.address)) {
-                setFromTokenAllowance(new BN("720000000000000000000000000")); // Large number for AVAX
+                setFromTokenAllowance(new BN("720000000000000000000000000"));
             }
         };
-
         getFromTokenAllowance();
-    }, [account, fromAmount, amountInComputed, fromToken, refresh]);
+    }, [account, fromAmount, fromToken, refresh]);
 
     useEffect(() => {
         if (account.balances) {
@@ -458,19 +455,18 @@ const ArenaSwapPanel = () => {
 
     useEffect(() => {
         if (WrapUtils.isWrapOperation(fromToken, toToken)) {
-            // Wrap/unwrap operations don't need pair checking
             setCurrentPairExists(true);
             setCurrentPairAddress(WAVAX_ADDRESS);
         } else {
-            checkAndCachePairAddress(fromToken.address, toToken.address);
+            checkAndCachePairAddress(fromToken.address, toToken.address, useStablePool);
         }
-    }, [fromToken, toToken, pairMap]);
+    }, [fromToken, toToken, useStablePool, pairMap]);
 
     return (
         <div className='flex flex-col gap-1 items-center justify-start'>
             <div>
                 <Card className='card swap-card'>
-                    <CardContent className='swap-card-content'>
+                    <CardContent className='swap-card-content pb-0'>
                         <div className='flex-1 flex flex-col px-3'>
                             <div className='flex-1 flex flex-row p-2 pb-0 items-center'>
                                 <Input
@@ -495,7 +491,7 @@ const ArenaSwapPanel = () => {
                                 <div></div>
                             </div>
                             <div className='relative'>
-                                <Separator className='my-4 seperator' />
+                                <Separator className='my-4 bg-isbjorn-blue seperator' />
                                 <div
                                     className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-white dark:bg-dark-2 rounded-full flex items-center justify-center cursor-pointer transition-colors"
                                     onClick={switchToAndFrom}
@@ -510,7 +506,6 @@ const ArenaSwapPanel = () => {
                                     className='amount-input no-arrows'
                                     autoComplete="off"
                                     value={toAmountInputValue}
-                                    onChange={(e) => handleToInputChange(e.target.value)}
                                 />
                                 <TokenSearchChooser startSelected={toToken} available={tokenList} onSelection={onToTokenChange} onImport={handleTokenImport} />
                             </div>
@@ -535,7 +530,13 @@ const ArenaSwapPanel = () => {
                                                         onCheckedChange={setSupportFeeTokens} />
                                                     <span> Support Fee/Reflection Tokens</span>
                                                 </div>
-
+                                                <div className='flex flex-row gap-2 items-center justify-between'>
+                                                    <Switch 
+                                                        className={useStablePool ? "bg-cash-green" : "bg-error-red"}
+                                                        checked={useStablePool}
+                                                        onCheckedChange={setUseStablePool} />
+                                                    <span> Use Stable Pool Pair</span>
+                                                </div>
                                             </div>
                                         </PopoverContent>
                                     </Popover>
@@ -545,7 +546,7 @@ const ArenaSwapPanel = () => {
                                         checked={safeModeEnabled}
                                         onCheckedChange={setSafeModeEnabled} />
                                 </div>
-                                <div className='flex flex-row justify-center items-center'>
+                                <div className='flex flex-row'>
                                     <div className='flex slippage-input items-center justify-center mr-1'>Slippage </div>
                                     <SlippageInput allowedSlippage={allowedSlippage} setAllowedSlippage={setAllowedSlippage} safeModeEnabled={safeModeEnabled} />
                                 </div>
@@ -555,9 +556,8 @@ const ArenaSwapPanel = () => {
                                     disabled={isConnected && (isLoading ||
                                         (fromAmount.isZero() && toAmount.isZero()) ||
                                         (!isFromAmountExact && amountInComputed.gt(fromBalance)) ||
-                                        (isFromAmountExact && fromAmount.gt(fromBalance)) || !currentPairExists)
-                                    }
-                                    className="arena-swap-button"
+                                        (isFromAmountExact && fromAmount.gt(fromBalance)) || !currentPairExists)}
+                                    className="blackhole-swap-button"
                                     onClick={() => {
                                         if (isConnected) {
                                             handleSwapButtonClick();
@@ -568,7 +568,7 @@ const ArenaSwapPanel = () => {
                                 >
                                     {getButtonText()}
                                 </Button>
-                                <SwapInfo routerAddress={ARENA_TRADE_ROUTER_ADDRESS} pairAddress={currentPairExists ? currentPairAddress : undefined} />
+                                <SwapInfo routerAddress={BLACKHOLE_ROUTER_ADDRESS} pairAddress={currentPairExists ? currentPairAddress : undefined} includeType={true} pairType={getPairType()} />
                             </div>
 
                         </div>
@@ -576,8 +576,8 @@ const ArenaSwapPanel = () => {
                 </Card>
             </div>
 
-        </div >
+        </div>
     )
-};
+}
 
-export default ArenaSwapPanel;
+export default BlackholeSwapPanel

@@ -5,6 +5,7 @@ import RootLayout from '@/_root/RootLayout';
 import { Arena, Home, LFJ, NotFound, Pangolin, PHARAOH, Uniswap } from '@/_root/pages';
 import { Toaster } from "@/components/ui/sonner";
 import { ScrollToTop } from './components/shared';
+import Blackhole from './_root/pages/Blackhole';
 
 function App() {
 
@@ -19,6 +20,7 @@ function App() {
           <Route path="/Arena" element={<Arena />} />
           <Route path="/Pangolin" element={<Pangolin />} />
           <Route path="/Uniswap" element={<Uniswap />} />
+          <Route path="/Blackhole" element={<Blackhole />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

@@ -103,6 +103,26 @@ const Home = () => {
                         </span>
                     </div>
                 </Link>
+
+                {/* Blackhole Button */}
+                <Link
+                    to="/Blackhole"
+                    className="group home-display-card"
+                >
+                    <img
+                        src="/assets/BlackholeLogo.png"
+                        alt="Use Blackhole v1"
+                        className="w-96 h-48 object-cover group-hover:brightness-110 transition-all duration-300 relative z-10 bg-blackhole-black"
+                    />
+                    {/* Background overlay */}
+                    <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity duration-300 z-20"></div>
+                    {/* Text overlay - separate from background */}
+                    <div className="absolute inset-0 flex items-center justify-center z-30">
+                        <span className="text-white font-bold text-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            Use Blackhole v1
+                        </span>
+                    </div>
+                </Link>
             </div>
         </div>
     )

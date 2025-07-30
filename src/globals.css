@@ -41,6 +41,10 @@
   --color-arena-orange: rgb(235, 84, 10);
   --color-arena-orange-hover: rgb(241, 135, 84);
 
+  --color-blackhole-black: rgb(14, 14, 19);
+  --color-blackhole-yellow: rgb(250, 255, 0);
+  --color-blackhole-yellow-hover: rgb(199, 204, 0);
+
   --text-xxs: 0.625rem;
   --text-xxs--line-height: calc(1 / 0.625);
   --text-xxxs: 0.5rem;
@@ -184,6 +188,10 @@ body {
 
 .arena-swap-button {
   @apply bg-arena-orange hover:bg-arena-orange-hover text-white flex gap-2 w-full items-center cursor-pointer;
+}
+
+.blackhole-swap-button {
+  @apply bg-blackhole-yellow hover:bg-blackhole-yellow-hover text-black flex gap-2 w-full items-center cursor-pointer;
 }
 
 .swap-card {

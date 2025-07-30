@@ -244,7 +244,7 @@ const UniswapSwapPanel = () => {
                 target="_blank"
                 style={{ textDecoration: "underline" }}
             >
-                View on Snowtrace
+                View on Snowscan
             </a>
         );
 
