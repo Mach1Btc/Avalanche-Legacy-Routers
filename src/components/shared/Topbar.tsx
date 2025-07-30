@@ -20,6 +20,7 @@ const Topbar = () => {
                     <NavLink to="/Pangolin" className='topbar-link'>Pangolin</NavLink>
                     <NavLink to="/Uniswap" className='topbar-link'>Uniswap</NavLink>
                     <NavLink to="/Blackhole" className='topbar-link'>Blackhole</NavLink>
+                    <NavLink to="/VaporDEX" className='topbar-link'>VaporDEX</NavLink>
                 </div>
                 <div className='connect-and-theme-button-wrapper'>
                     <ThemeToggle />

@@ -1,7 +1,9 @@
 export { default as Arena } from "./Arena";
+export { default as Blackhole } from "./Blackhole";
 export { default as Home } from "./Home";
 export { default as NotFound } from "./NotFound";
 export { default as LFJ } from "./LFJ";
 export { default as Pangolin } from "./Pangolin";
 export { default as PHARAOH } from "./PHARAOH";
 export { default as Uniswap } from "./Uniswap";
+export { default as VaporDEX } from "./VaporDEX";

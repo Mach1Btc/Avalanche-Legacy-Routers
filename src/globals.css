@@ -45,6 +45,11 @@
   --color-blackhole-yellow: rgb(250, 255, 0);
   --color-blackhole-yellow-hover: rgb(199, 204, 0);
 
+  --color-vapor-blue: rgb(12, 69, 173);
+  --color-vapor-blue-hover: rgb(18, 187, 210);
+  --color-vapor-green: rgb(27, 204, 178);
+  --color-vapor-gray: rgb(15, 15, 15);
+
   --text-xxs: 0.625rem;
   --text-xxs--line-height: calc(1 / 0.625);
   --text-xxxs: 0.5rem;
@@ -78,7 +83,7 @@ body {
 }
 
 .topbar-links {
-  @apply hidden lg:flex flex-row gap-4;
+  @apply hidden xl:flex flex-row gap-4;
   @apply absolute left-1/2 transform -translate-x-1/2;
 }
 
@@ -192,6 +197,10 @@ body {
 
 .blackhole-swap-button {
   @apply bg-blackhole-yellow hover:bg-blackhole-yellow-hover text-black flex gap-2 w-full items-center cursor-pointer;
+}
+
+.vapor-dex-swap-button {
+  @apply bg-vapor-blue hover:bg-vapor-blue-hover text-white flex gap-2 w-full items-center cursor-pointer;
 }
 
 .swap-card {

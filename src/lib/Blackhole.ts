@@ -28,15 +28,6 @@ export async function createSwapTransaction(
   txHash?: string;
   error?: unknown;
 }> {
-    console.log(accountAddress,
-  tokenInAddress,
-  tokenOutAddress,
-  isFromExact,
-  amountIn,
-  amountOut,
-  slippage,
-  stable,
-  supportFee);
   const now = Math.floor(Date.now() / 1000);
   const deadline = now + DEADLINE_SECONDS;
 
@@ -184,7 +175,7 @@ export const getAmountOut = async (
     if (quoteResult) {
       amountOut = new BN(quoteResult.toString());
     } else {
-      throw new Error("Error: getAmountOut() could not retrieve quote!");
+      amountOut = new BN(0);
     }
   } catch (error) {
     console.log(error);

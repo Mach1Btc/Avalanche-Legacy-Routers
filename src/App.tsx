@@ -2,7 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 
 import './globals.css';
 import RootLayout from '@/_root/RootLayout';
-import { Arena, Home, LFJ, NotFound, Pangolin, PHARAOH, Uniswap } from '@/_root/pages';
+import { Arena, Home, LFJ, NotFound, Pangolin, PHARAOH, Uniswap, VaporDEX } from '@/_root/pages';
 import { Toaster } from "@/components/ui/sonner";
 import { ScrollToTop } from './components/shared';
 import Blackhole from './_root/pages/Blackhole';
@@ -21,6 +21,7 @@ function App() {
           <Route path="/Pangolin" element={<Pangolin />} />
           <Route path="/Uniswap" element={<Uniswap />} />
           <Route path="/Blackhole" element={<Blackhole />} />
+          <Route path="/VaporDEX" element={<VaporDEX />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

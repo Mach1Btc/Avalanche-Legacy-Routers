@@ -16,3 +16,4 @@ export { default as TokenChooser } from "./TokenChooser";
 export { default as SlippageInput } from "./SlippageInput";
 export { default as SwapInfo } from "./SwapInfo";
 export { default as UniswapSwapPanel } from "./UniswapSwapPanel";
+export { default as VaporDEXSwapPanel } from "./VaporDEXSwapPanel";

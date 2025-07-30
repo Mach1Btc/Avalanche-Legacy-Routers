@@ -200,7 +200,7 @@ export const getAmountOut = async (
     if (quoteResult) {
       amountOut = new BN(quoteResult.toString());
     } else {
-      throw new Error("Error: getAmountOut() could not retrieve quote!");
+      amountOut = new BN(0);
     }
   } catch (error) {
     console.log(error);
@@ -281,7 +281,7 @@ export const getAmountIn = async (
     if (quoteResult) {
       amountIn = new BN(quoteResult.toString());
     } else {
-      throw new Error("Error: getAmountIn() could not retrieve quote!");
+      amountIn = new BN(0);
     }
   } catch (error) {
     console.log(error);
