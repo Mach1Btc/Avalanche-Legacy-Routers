@@ -236,7 +236,7 @@ const TokenSearchChooser: FC<TokenSearchChooserProps> = ({
                                             value={token.ticker.toLowerCase()}
                                             onSelect={() => handleSelect(address)}
                                         >
-                                            <div className="flex flex-row gap-2 items-center base-semibold flex-1">
+                                            <div className="flex flex-row gap-2 items-center base-semibold flex-1 cursor-pointer">
                                                 <div className="relative w-8 h-8 rounded-full overflow-hidden shadow-md mr-1">
                                                     <img
                                                         src={token.imgUrl || '/placeholder-token.png'}

@@ -19,7 +19,7 @@ import { WrapUtils } from '@/lib/WAVAX';
 import { createSwapTransaction, getAmountIn, getAmountOut, getPairAddressFor } from '@/lib/VaporDEX';
 
 
-const VaporDexSwapPanel = () => {
+const VaporDEXSwapPanel = () => {
 
     const {
         account,
@@ -580,4 +580,4 @@ const VaporDexSwapPanel = () => {
     )
 };
 
-export default VaporDexSwapPanel;
+export default VaporDEXSwapPanel;

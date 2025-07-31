@@ -1036,4 +1036,31 @@ export const default_token_list: TokenList = {
     decimals: 18,
     rank: "",
   },
+  "0x7bddaf6dbab30224aa2116c4291521c7a60d5f55": {
+    address: "0x7bddaF6DbAB30224AA2116c4291521C7a60D5f55",
+    name: "VapeToken",
+    ticker: "VAPE",
+    imgUrl:
+      "https://static.debank.com/image/avax_token/logo_url/0x7bddaf6dbab30224aa2116c4291521c7a60d5f55/b68843e963057ad0fed9bba253e01ddb.png",
+    decimals: 18,
+    rank: "",
+  },
+  "0x83a283641c6b4df383bcddf807193284c84c5342": {
+    address: "0x83a283641C6B4DF383BCDDf807193284C84c5342",
+    name: "VaporNodes",
+    ticker: "VPND",
+    imgUrl:
+      "https://static.debank.com/image/avax_token/logo_url/0x83a283641c6b4df383bcddf807193284c84c5342/44fc36036a55ef46aba8f778d886887d.png",
+    decimals: 18,
+    rank: "",
+  },
+  "0xcd94a87696fac69edae3a70fe5725307ae1c43f6": {
+    address: "0xcd94a87696FAC69Edae3a70fE5725307Ae1c43f6",
+    name: "BLACKHOLE",
+    ticker: "BLACK",
+    imgUrl:
+      "https://static.debank.com/image/project/logo_url/avax_blackholexyz/1188c554d3310e2848ee511ad00e9f00.png",
+    decimals: 18,
+    rank: "",
+  },
 };
