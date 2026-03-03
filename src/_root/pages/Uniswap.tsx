@@ -1,4 +1,4 @@
-import { RouterSelecter, UniswapSwapPanel } from "@/components/shared"
+import { AAdsComponent, RouterSelecter, UniswapSwapPanel } from "@/components/shared"
 
 const Uniswap = () => {
     return (
@@ -7,6 +7,7 @@ const Uniswap = () => {
             <div className="flex flex-col w-4/5 xl:w-3/4 h-full gap-4 items-center justify-center">
                 <UniswapSwapPanel />
             </div>
+            <AAdsComponent />
         </div>
     )
 };

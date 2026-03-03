@@ -1,4 +1,4 @@
-import { BlackholeSwapPanel, RouterSelecter } from '@/components/shared';
+import { AAdsComponent, BlackholeSwapPanel, RouterSelecter } from '@/components/shared';
 
 const Blackhole = () => {
     return (
@@ -7,6 +7,7 @@ const Blackhole = () => {
             <div className="flex flex-col w-4/5 xl:w-3/4 h-full gap-4 items-center justify-center">
                 <BlackholeSwapPanel />
             </div>
+            <AAdsComponent />
         </div>
     )
 };

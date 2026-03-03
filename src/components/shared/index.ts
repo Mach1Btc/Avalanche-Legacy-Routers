@@ -1,3 +1,4 @@
+export { default as AAdsComponent } from "./AAdsComponent";
 export { default as AddressCopyLink } from "./AddressCopyLink";
 export { default as ArenaSwapPanel } from "./ArenaSwapPanel";
 export { default as BlackholeSwapPanel } from "./BlackholeSwapPanel";

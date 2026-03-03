@@ -35,6 +35,9 @@ const INITIAL_STATE = {
     setLastToToken: () => { },
     wasFromLastChanged: true,
     setWasFromLastChanged: () => { },
+
+    adsEnabled: true,
+    setAdsEnabled: () => { },
 }
 
 type IContextType = {
@@ -57,9 +60,37 @@ type IContextType = {
     setLastToToken: React.Dispatch<React.SetStateAction<Token>>;
     wasFromLastChanged: boolean;
     setWasFromLastChanged: React.Dispatch<React.SetStateAction<boolean>>;
+
+    adsEnabled: boolean;
+    setAdsEnabled: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const AuthContext = createContext<IContextType>(INITIAL_STATE);
+
+const ADS_STORAGE_KEY = "adsEnabled";
+const ADS_EXPIRY_MS = 24 * 60 * 60 * 1000; // 24 hours
+
+function getStoredAdsEnabled(): boolean {
+    try {
+        const stored = localStorage.getItem(ADS_STORAGE_KEY);
+        if (!stored) return true;
+        const { value, expiry } = JSON.parse(stored);
+        if (Date.now() > expiry) {
+            localStorage.removeItem(ADS_STORAGE_KEY);
+            return true;
+        }
+        return value;
+    } catch {
+        return true;
+    }
+}
+
+function storeAdsEnabled(value: boolean) {
+    localStorage.setItem(
+        ADS_STORAGE_KEY,
+        JSON.stringify({ value, expiry: Date.now() + ADS_EXPIRY_MS })
+    );
+}
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { address, isConnected: connected } = useAccount();
@@ -75,6 +106,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [lastToToken, setLastToToken] = useState<Token>(toToken);
 
     const [wasFromLastChanged, setWasFromLastChanged] = useState<boolean>(true);
+
+    const [adsEnabled, setAdsEnabled] = useState<boolean>(() => getStoredAdsEnabled());
 
     const update = () => {
         setRefresh(prev => prev + 1);
@@ -144,6 +177,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     }, [account.address, refresh]);
 
+    useEffect(() => {
+        storeAdsEnabled(adsEnabled);
+    }, [adsEnabled]);
+
     const value = {
         account,
         setAccount,
@@ -163,7 +200,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         lastToToken,
         setLastToToken,
         wasFromLastChanged,
-        setWasFromLastChanged
+        setWasFromLastChanged,
+
+        adsEnabled,
+        setAdsEnabled
     };
 
     return (

@@ -1,4 +1,5 @@
-import { ArenaSwapPanel, RouterSelecter } from '@/components/shared';
+import { AAdsComponent, ArenaSwapPanel, RouterSelecter } from '@/components/shared';
+
 
 const Arena = () => {
     return (
@@ -7,6 +8,7 @@ const Arena = () => {
             <div className="flex flex-col w-4/5 xl:w-3/4 h-full gap-4 items-center justify-center">
                 <ArenaSwapPanel />
             </div>
+            <AAdsComponent />
         </div>
     )
 };

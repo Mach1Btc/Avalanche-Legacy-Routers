@@ -1,4 +1,4 @@
-import { PangolinSwapPanel, RouterSelecter } from '@/components/shared';
+import { AAdsComponent, PangolinSwapPanel, RouterSelecter } from '@/components/shared';
 
 const Pangolin = () => {
     return (
@@ -7,6 +7,7 @@ const Pangolin = () => {
             <div className="flex flex-col w-4/5 xl:w-3/4 h-full gap-4 items-center justify-center">
                 <PangolinSwapPanel />
             </div>
+            <AAdsComponent />
         </div>
     )
 };

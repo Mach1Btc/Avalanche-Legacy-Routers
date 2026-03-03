@@ -1,4 +1,4 @@
-import { LFJSwapPanel, RouterSelecter } from '@/components/shared';
+import { AAdsComponent, LFJSwapPanel, RouterSelecter } from '@/components/shared';
 
 const LFJ = () => {
     return (
@@ -7,6 +7,7 @@ const LFJ = () => {
             <div className="flex flex-col w-4/5 xl:w-3/4 h-full gap-4 items-center justify-center">
                 <LFJSwapPanel />
             </div>
+            <AAdsComponent />
         </div>
     )
 };
