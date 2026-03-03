@@ -1063,4 +1063,13 @@ export const default_token_list: TokenList = {
     decimals: 18,
     rank: "",
   },
+  "0xba5444409257967e5e50b113c395a766b0678c03": {
+    address: "0xBa5444409257967E5E50b113C395A766B0678C03",
+    name: "Hash Cash",
+    ticker: "hCASH",
+    imgUrl:
+      "https://static.debank.com/image/avax_token/logo_url/0xba5444409257967e5e50b113c395a766b0678c03/bebd19bfd8319779967c8b285a4a8180.png",
+    decimals: 18,
+    rank: "25",
+  },
 };

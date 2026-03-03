@@ -1,3 +1,4 @@
+import { AAdsComponent } from '@/components/shared';
 import { Link } from 'react-router-dom';
 
 const Home = () => {
@@ -146,6 +147,8 @@ const Home = () => {
 
                 
             </div>
+            <br />
+            <AAdsComponent />
         </div>
     )
 };
