@@ -13,6 +13,14 @@
   --color-light-2: oklch(0.85 0 0); /* Light gray */
   --color-light-1: oklch(0.95 0 0); /* Very light gray */
 
+  --color-geyser: rgb(210, 216, 222);
+  --color-loblolly: rgb(189, 194, 200);
+  --color-submarine: rgb(181, 189, 197);
+  --color-regent-gray: rgb(149, 158, 166);
+  --color-ship-gray: rgb(65, 65, 66);
+  --color-mine-shaft: rgb(39, 39, 39);
+  --color-near-black: rgb(5,5,5);
+
   --color-bitcoin-orange: rgb(247, 147, 26);
 
   --color-cash-green: rgb(96, 212, 63);
@@ -59,15 +67,16 @@
 }
 
 body {
-  @apply bg-white dark:bg-dark-2 transition-colors;
+  @apply bg-white dark:bg-black transition-colors;
 }
 
 .topbar-container {
-  @apply w-full bg-white dark:bg-dark-3 shadow-md flex justify-center transition-colors;
+  @apply w-full flex justify-center mt-4 px-2 sm:px-4 md:px-8;
 }
 
 .topbar {
-  @apply flex flex-row justify-between items-center h-[80px] w-full px-3 sm:px-6 relative;
+  @apply flex flex-row justify-between items-center h-[80px] w-full px-3 sm:px-6 relative bg-white dark:bg-near-black border-1 border-submarine dark:border-mine-shaft shadow-lg rounded-2xl;
+  max-width: 100%;
 }
 
 .logo {
@@ -100,7 +109,7 @@ body {
 }
 
 .bottombar-container {
-  @apply w-full bg-white dark:bg-dark-2 flex justify-center px-4 transition-colors z-10;
+  @apply w-full bg-white dark:bg-black flex justify-center px-4 transition-colors z-10;
 }
 
 .bottombar {
@@ -140,7 +149,7 @@ body {
 }
 
 .amount-input {
-  @apply bg-white dark:bg-dark-2 mr-2 border-0 text-2xl transition-colors;
+  @apply bg-white dark:bg-near-black mr-2 border-0 text-2xl transition-colors;
 }
 
 .token-selector-content {
@@ -204,7 +213,7 @@ body {
 }
 
 .swap-card {
-  @apply w-[360px] sm:w-[540px] shadow-2xl mb-30 mt-10 pb-2;
+  @apply w-[360px] sm:w-[540px] shadow-2xl mb-30 mt-10 pb-2 border border-submarine dark:border-mine-shaft;
 }
 
 .swap-card-content {

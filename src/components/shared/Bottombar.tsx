@@ -13,7 +13,7 @@ const Bottombar = () => {
                         <span className="hidden sm:flex">Legacy Routers</span>
                         <span className="flex sm:hidden">LR</span>
                     </div>
-                    <span className="hidden sm:flex text-xxs md:text-xs lg:text-base" >&copy; 2025 Legacy Routers</span>
+                    <span className="hidden sm:flex text-xxs md:text-xs lg:text-base" >&copy; {new Date().getFullYear()} Legacy Routers</span>
                 </div>
 
                 <div className="flex flex-row gap-8 text-xl">
