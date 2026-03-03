@@ -1,7 +1,15 @@
 import { useUserContext } from "@/context/AuthContext";
+import { toast } from "sonner";
+
+const TIP_ADDRESS = "0xbeB6f962A0Cb4b6E97CC268B1d219701daC3a19C"; // replace with your actual address
 
 const Bottombar = () => {
     const { adsEnabled, setAdsEnabled } = useUserContext();
+
+    const handleCopyTipAddress = () => {
+        navigator.clipboard.writeText(TIP_ADDRESS);
+        toast.success("Tip address copied to clipboard!");
+    };
 
     return (
         <div className='bottombar-container relative'>
@@ -47,6 +55,13 @@ const Bottombar = () => {
                     className="hover:text-gray-400 transition-colors cursor-pointer"
                 >
                     Ads: {adsEnabled ? "On" : "Off"}
+                </button>
+                <span className="mx-0.5 sm:mx-1 text-gray-400">|</span>
+                <button
+                    onClick={handleCopyTipAddress}
+                    className="hover:text-gray-400 transition-colors cursor-pointer"
+                >
+                    Send a Tip
                 </button>
             </div>
         </div>
