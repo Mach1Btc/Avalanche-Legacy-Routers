@@ -568,7 +568,7 @@ const ArenaSwapPanel = () => {
                                 >
                                     {getButtonText()}
                                 </Button>
-                                <SwapInfo routerAddress={ARENA_TRADE_ROUTER_ADDRESS} pairAddress={currentPairExists ? currentPairAddress : undefined} />
+                                <SwapInfo routerAddress={ARENA_TRADE_ROUTER_ADDRESS} pairAddress={currentPairExists ? currentPairAddress : undefined} mainSiteLink='https://arenatrade.ai/tokens/arena-dex'/>
                             </div>
 
                         </div>

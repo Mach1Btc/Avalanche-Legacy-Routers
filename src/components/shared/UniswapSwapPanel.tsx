@@ -569,7 +569,7 @@ const UniswapSwapPanel = () => {
                                 >
                                     {getButtonText()}
                                 </Button>
-                                <SwapInfo routerAddress={UNISWAP_V2_ROUTER_ADDRESS} pairAddress={currentPairExists ? currentPairAddress : undefined} />
+                                <SwapInfo routerAddress={UNISWAP_V2_ROUTER_ADDRESS} pairAddress={currentPairExists ? currentPairAddress : undefined} mainSiteLink='https://app.uniswap.org/swap'/>
                             </div>
                         </div>
                     </CardContent>

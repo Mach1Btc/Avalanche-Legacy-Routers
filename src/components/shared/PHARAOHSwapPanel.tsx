@@ -560,7 +560,7 @@ const PHARAOHSwapPanel = () => {
                                 >
                                     {getButtonText()}
                                 </Button>
-                                <SwapInfo routerAddress={PHARAOH_ROUTER_ADDRESS} pairAddress={currentPairExists ? currentPairAddress : undefined} includeType={true} pairType={getPairType()} />
+                                <SwapInfo routerAddress={PHARAOH_ROUTER_ADDRESS} pairAddress={currentPairExists ? currentPairAddress : undefined} includeType={true} pairType={getPairType()} mainSiteLink='https://www.phar.gg/trade'/>
                             </div>
 
                         </div>

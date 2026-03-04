@@ -568,14 +568,13 @@ const LFJSwapPanel = () => {
                                 >
                                     {getButtonText()}
                                 </Button>
-                                <SwapInfo routerAddress={LFJ_ROUTER_ADDRESS} pairAddress={currentPairExists ? currentPairAddress : undefined} />
+                                <SwapInfo routerAddress={LFJ_ROUTER_ADDRESS} pairAddress={currentPairExists ? currentPairAddress : undefined} mainSiteLink='https://lfj.gg/swap' />
                             </div>
 
                         </div>
                     </CardContent>
                 </Card>
             </div>
-
         </div >
     )
 };

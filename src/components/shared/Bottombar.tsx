@@ -1,7 +1,7 @@
 import { useUserContext } from "@/context/AuthContext";
 import { toast } from "sonner";
 
-const TIP_ADDRESS = "0xbeB6f962A0Cb4b6E97CC268B1d219701daC3a19C"; // replace with your actual address
+const TIP_ADDRESS = "0xbeB6f962A0Cb4b6E97CC268B1d219701daC3a19C";
 
 const Bottombar = () => {
     const { adsEnabled, setAdsEnabled } = useUserContext();

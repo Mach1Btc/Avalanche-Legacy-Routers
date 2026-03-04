@@ -568,7 +568,7 @@ const BlackholeSwapPanel = () => {
                                 >
                                     {getButtonText()}
                                 </Button>
-                                <SwapInfo routerAddress={BLACKHOLE_ROUTER_ADDRESS} pairAddress={currentPairExists ? currentPairAddress : undefined} includeType={true} pairType={getPairType()} />
+                                <SwapInfo routerAddress={BLACKHOLE_ROUTER_ADDRESS} pairAddress={currentPairExists ? currentPairAddress : undefined} includeType={true} pairType={getPairType()} mainSiteLink='https://blackhole.xyz/swap' />
                             </div>
 
                         </div>

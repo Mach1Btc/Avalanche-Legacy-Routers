@@ -569,7 +569,7 @@ const PangolinSwapPanel = () => {
                                 >
                                     {getButtonText()}
                                 </Button>
-                                <SwapInfo routerAddress={PANGOLIN_ROUTER_ADDRESS} pairAddress={currentPairExists ? currentPairAddress : undefined} />
+                                <SwapInfo routerAddress={PANGOLIN_ROUTER_ADDRESS} pairAddress={currentPairExists ? currentPairAddress : undefined} mainSiteLink='https://app.pangolin.exchange/swap'/>
                             </div>
 
                         </div>

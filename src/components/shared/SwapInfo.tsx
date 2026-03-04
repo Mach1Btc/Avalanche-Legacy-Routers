@@ -1,18 +1,21 @@
 import React from 'react'
 import AddressCopyLink from './AddressCopyLink';
+import { ExternalLink } from "lucide-react";
 
 interface SwapInfoProps {
     routerAddress: string;
     pairAddress?: string;
     includeType?: boolean;
     pairType?: string;
+    mainSiteLink: string;
 }
 
 const SwapInfo: React.FC<SwapInfoProps> = ({
     routerAddress,
     pairAddress,
     includeType = false,
-    pairType = ''
+    pairType = '',
+    mainSiteLink = ''
 }) => {
 
     return (
@@ -38,17 +41,22 @@ const SwapInfo: React.FC<SwapInfoProps> = ({
             {pairAddress !== undefined && <div className='info-links'>
                 <div></div>
                 <div className='flex flex-row gap-1'>
-                    <a href={"https://dexscreener.com/avalanche/" + pairAddress.toLowerCase()} target='_blank'>
+                    <a href={"https://dexscreener.com/avalanche/" + pairAddress.toLowerCase()} target='_blank' title="Dexscreener">
                         <img
                             src="/assets/DexscreenerLogo.svg"
                             className='h-5 w-5'
+                            alt="Dexscreener"
                         />
                     </a>
-                    <a href={"https://www.dextools.io/app/en/avalanche/pair-explorer/" + pairAddress.toLowerCase()} target='_blank' rel="noopener noreferrer">
+                    <a href={"https://www.dextools.io/app/en/avalanche/pair-explorer/" + pairAddress.toLowerCase()} target='_blank' rel="noopener noreferrer" title="Dex Tools">
                         <img
                             src="/assets/DextoolsLogo.svg"
                             className='h-5 w-5'
+                            alt="Dex Tools"
                         /></a>
+                    <a href={mainSiteLink} target='_blank' title="Current Dex Router's Main Website">
+                        <ExternalLink className='h-5 w-5' color="#919191"/>
+                    </a>
                 </div>
                 <div></div>
             </div>}
