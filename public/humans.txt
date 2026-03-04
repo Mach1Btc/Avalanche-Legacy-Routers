@@ -1,0 +1,10 @@
+/* TEAM */
+Creator: Mach1___
+X (Twitter): https://x.com/Mach1___
+Arena: https://arena.social/Mach1___
+Tip Address: 0xbeB6f962A0Cb4b6E97CC268B1d219701daC3a19C
+
+/* SITE */
+Built with: React, Vite, TypeScript
+Powered by: Avalanche
+URL: https://avaxlegacyrouters.xyz
