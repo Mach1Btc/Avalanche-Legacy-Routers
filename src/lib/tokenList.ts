@@ -102,9 +102,10 @@ export const default_token_list: TokenList = {
   },
   "0xa25eaf2906fa1a3a13edac9b9657108af7b703e3": {
     address: "0xa25eaf2906fa1a3a13edac9b9657108af7b703e3",
-    name: "GoGoPool Liquid Staking Token",
-    ticker: "ggAVAX",
-    imgUrl: "/assets/images/tokens/ggavax.png",
+    name: "Hypha Staked AVAX",
+    ticker: "stAVAX",
+    imgUrl:
+      "https://assets.coingecko.com/coins/images/33543/standard/stAVAX.png?1750256766",
     decimals: 18,
     rank: "12",
   },
@@ -1089,5 +1090,23 @@ export const default_token_list: TokenList = {
       "https://static.debank.com/image/avax_token/logo_url/0xba5444409257967e5e50b113c395a766b0678c03/bebd19bfd8319779967c8b285a4a8180.png",
     decimals: 18,
     rank: "25",
+  },
+  "0xC891EB4cbdEFf6e073e859e987815Ed1505c2ACD": {
+    address: "0xc891eb4cbdeff6e073e859e987815ed1505c2acd",
+    name: "Euro Coin",
+    ticker: "EURC",
+    imgUrl:
+      "https://static.debank.com/image/avax_token/logo_url/0xc891eb4cbdeff6e073e859e987815ed1505c2acd/790d0c3a6da87111b66255c0d57108fa.png",
+    decimals: 6,
+    rank: "7",
+  },
+  "0x2775d5105276781B4b85bA6eA6a6653bEeD1dd32": {
+    address: "0x2775d5105276781b4b85ba6ea6a6653beed1dd32",
+    name: "Tether Gold",
+    ticker: "XAUt0",
+    imgUrl:
+      "https://static.debank.com/image/hyper_token/logo_url/0xf4d9235269a96aadafc9adae454a0618ebe37949/b1a05e804b251bbd45fcc8f1ffe74a43.png",
+    decimals: 6,
+    rank: "8",
   },
 };
