@@ -38,28 +38,25 @@ const SwapInfo: React.FC<SwapInfoProps> = ({
                     <span className='pointer-events-none mr-7'>{pairType}</span>
                 </div>
             )}
-            {pairAddress !== undefined && <div className='info-links'>
+            <div className='info-links'>
                 <div></div>
                 <div className='flex flex-row gap-1'>
-                    <a href={"https://dexscreener.com/avalanche/" + pairAddress.toLowerCase()} target='_blank' title="Dexscreener">
-                        <img
-                            src="/assets/DexscreenerLogo.svg"
-                            className='h-5 w-5'
-                            alt="Dexscreener"
-                        />
-                    </a>
-                    <a href={"https://www.dextools.io/app/en/avalanche/pair-explorer/" + pairAddress.toLowerCase()} target='_blank' rel="noopener noreferrer" title="Dex Tools">
-                        <img
-                            src="/assets/DextoolsLogo.svg"
-                            className='h-5 w-5'
-                            alt="Dex Tools"
-                        /></a>
+                    {pairAddress !== undefined && (
+                        <>
+                            <a href={"https://dexscreener.com/avalanche/" + pairAddress.toLowerCase()} target='_blank' title="Dexscreener">
+                                <img src="/assets/DexscreenerLogo.svg" className='h-5 w-5' alt="Dexscreener" />
+                            </a>
+                            <a href={"https://www.dextools.io/app/en/avalanche/pair-explorer/" + pairAddress.toLowerCase()} target='_blank' rel="noopener noreferrer" title="Dex Tools">
+                                <img src="/assets/DextoolsLogo.svg" className='h-5 w-5' alt="Dex Tools" />
+                            </a>
+                        </>
+                    )}
                     <a href={mainSiteLink} target='_blank' title="Current Dex Router's Main Website">
-                        <ExternalLink className='h-5 w-5' color="#919191"/>
+                        <ExternalLink className='h-5 w-5' color="#919191" />
                     </a>
                 </div>
                 <div></div>
-            </div>}
+            </div>
         </div>
     )
 }

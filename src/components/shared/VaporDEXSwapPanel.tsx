@@ -568,7 +568,7 @@ const VaporDEXSwapPanel = () => {
                                 >
                                     {getButtonText()}
                                 </Button>
-                                <SwapInfo routerAddress={VAPOR_ROUTER_ADDRESS} pairAddress={currentPairExists ? currentPairAddress : undefined} mainSiteLink='https://www.app.vapordex.io/'/>
+                                <SwapInfo routerAddress={VAPOR_ROUTER_ADDRESS} pairAddress={currentPairExists ? currentPairAddress : undefined} mainSiteLink='https://app.vapordex.io/swap'/>
                             </div>
 
                         </div>

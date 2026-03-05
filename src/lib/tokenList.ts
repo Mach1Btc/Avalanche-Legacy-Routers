@@ -152,14 +152,32 @@ export const default_token_list: TokenList = {
     decimals: 18,
     rank: "17",
   },
-  "0xAAAB9D12A30504559b0C5a9A5977fEE4A6081c6b": {
-    address: "0xAAAB9D12A30504559b0C5a9A5977fEE4A6081c6b",
+  "0x13A466998Ce03Db73aBc2d4DF3bBD845Ed1f28E7": {
+    address: "0x13a466998ce03db73abc2d4df3bbd845ed1f28e7",
     name: "PHARAOH",
     ticker: "PHAR",
     imgUrl:
+      "https://static.debank.com/image/avax_token/logo_url/0x13a466998ce03db73abc2d4df3bbd845ed1f28e7/74dfa6f92e2f79f4ea7720ff6d628a96.png",
+    decimals: 18,
+    rank: "15",
+  },
+  "0x26e9dbe75aed331E41272BEcE932Ff1B48926Ca9": {
+    address: "0x26e9dbe75aed331e41272bece932ff1b48926ca9",
+    name: "Pharaoh Liquid Staking Token",
+    ticker: "p33",
+    imgUrl:
+      "https://static.debank.com/image/avax_token/logo_url/0x26e9dbe75aed331e41272bece932ff1b48926ca9/cc14ab93cfb1d85953b85344df069257.png",
+    decimals: 18,
+    rank: "15",
+  },
+  "0xAAAB9D12A30504559b0C5a9A5977fEE4A6081c6b": {
+    address: "0xaaab9d12a30504559b0c5a9a5977fee4a6081c6b",
+    name: "PHARAOH (old)",
+    ticker: "PHAR (old)",
+    imgUrl:
       "https://static.debank.com/image/avax_token/logo_url/0xaaab9d12a30504559b0c5a9a5977fee4a6081c6b/d0e7fe6a9e4363ba3bc136bc04e051e8.png",
     decimals: 18,
-    rank: "13",
+    rank: "30",
   },
   "0x093783055f9047c2bff99c4e414501f8a147bc69": {
     address: "0x093783055f9047c2bff99c4e414501f8a147bc69",

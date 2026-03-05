@@ -8,15 +8,16 @@ import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover
 import { Loader, SlippageInput, TokenSearchChooser, SwapInfo } from '@/components/shared';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import BN from 'bn.js';
-import { defaultSlippage, explorer_url, PHARAOH_ROUTER_ADDRESS, safeModeEnabledMaxSlippage, WAVAX_ADDRESS } from '@/lib/constants';
+import { defaultSlippage, explorer_url, safeModeEnabledMaxSlippage, WAVAX_ADDRESS } from '@/lib/constants';
 import { Token } from '@/lib/types';
 import { formatBN, scaleToBN } from '@/lib/utils';
 import { useUserContext } from '@/context/AuthContext';
 import { approveERC20Amount, getERC20Allowance, importNewERC20Token } from '@/lib/ERC20';
 import { toast } from "sonner"
 import { WrapUtils } from '@/lib/WAVAX';
-import { getAmountOut, createSwapTransaction, getPairAddressFor } from '@/lib/PHARAOH';
+import { getAmountOut, createSwapTransaction, getPairAddressFor, getRouterAddress, PharaohVersion } from '@/lib/PHARAOH';
 
 
 const PHARAOHSwapPanel = () => {
@@ -42,6 +43,8 @@ const PHARAOHSwapPanel = () => {
 
     const { openConnectModal } = useConnectModal();
 
+    const [pharaohVersion, setPharaohVersion] = useState<PharaohVersion>("v1");
+
     const [fromAmount, setFromAmount] = useState<BN>(new BN(0));
     const [fromAmountInputValue, setFromAmountInputValue] = useState<string>('');
     const [fromTokenAllowance, setFromTokenAllowance] = useState<BN>(new BN(0));
@@ -54,7 +57,7 @@ const PHARAOHSwapPanel = () => {
     const [amountOutComputed, setAmountOutComputed] = useState<BN>(new BN(0));
     const [amountInComputed, setAmountInComputed] = useState<BN>(new BN(0));
 
-    const [isFromAmountExact, setIsFromAmountExact] = useState<boolean>(true); // ALWAY true on Pharaoh, but kept for consistency
+    const [isFromAmountExact, setIsFromAmountExact] = useState<boolean>(true);
 
     const [allowedSlippage, setAllowedSlippage] = useState<number>(defaultSlippage);
     const [safeModeEnabled, setSafeModeEnabled] = useState<boolean>(true);
@@ -71,6 +74,8 @@ const PHARAOHSwapPanel = () => {
     const [currentPairExists, setCurrentPairExists] = useState<boolean>(true);
     const [currentPairAddress, setCurrentPairAddress] = useState<string>('');
 
+    const routerAddress = getRouterAddress(pharaohVersion);
+
     const clearPanel = () => {
         setFromAmountInputValue('');
         setToAmountInputValue('');
@@ -78,6 +83,17 @@ const PHARAOHSwapPanel = () => {
         setToAmount(new BN(0));
     }
 
+    const handleVersionChange = (version: string) => {
+        setPharaohVersion(version as PharaohVersion);
+        // Clear computed amounts so they get re-fetched with the new router
+        setAmountOutComputed(new BN(0));
+        setAmountInComputed(new BN(0));
+        setToAmountInputValue('');
+        setFromTokenAllowance(new BN(0));
+        // Reset pair state so SwapInfo stays visible while re-fetching
+        setCurrentPairExists(true);
+        setCurrentPairAddress('');
+    };
 
     const handleFromInputChange = (value: string) => {
         setIsLoading(true);
@@ -104,35 +120,6 @@ const PHARAOHSwapPanel = () => {
 
         setDebounceTimer(newTimer);
     };
-
-    // const handleToInputChange = (value: string) => {
-    //     return
-    //     // setIsLoading(true);
-    //     // setFromAmount(new BN(0));
-    //     // if (!isNaN(Number(value)) || value === '') {
-    //     //     setToAmountInputValue(value);
-    //     //     if (value === '') {
-    //     //         setToAmount(new BN(0));
-    //     //         setFromAmountInputValue('');
-    //     //         setIsLoading(false);
-    //     //         return;
-    //     //     }
-    //     //     setIsFromAmountExact(false);
-    //     // }
-
-    //     // if (debounceTimer) {
-    //     //     clearTimeout(debounceTimer);
-    //     // }
-    //     // const newTimer = setTimeout(async () => {
-    //     //     if (!isNaN(Number(value)) && value !== '') {
-    //     //         setToAmount(scaleToBN(value, toToken.decimals));
-    //     //     }
-    //     // }, 1000);
-
-    //     // setDebounceTimer(newTimer);
-    // };
-
-
 
     const switchToAndFrom = () => {
         const tempToToken = toToken;
@@ -196,7 +183,8 @@ const PHARAOHSwapPanel = () => {
                 amountOutComputed,
                 allowedSlippage,
                 useStablePool,
-                supportFeeTokens
+                supportFeeTokens,
+                pharaohVersion
             );
         } else {
             result = await createSwapTransaction(
@@ -208,16 +196,16 @@ const PHARAOHSwapPanel = () => {
                 toAmount,
                 allowedSlippage,
                 useStablePool,
-                supportFeeTokens
+                supportFeeTokens,
+                pharaohVersion
             );
         }
         handleTransactionResult(result, "Swap");
     };
 
-    // Helper function for token approval
     const approveTokens = async (requiredAllowance: any): Promise<void> => {
         const result = await approveERC20Amount(
-            PHARAOH_ROUTER_ADDRESS,
+            routerAddress,
             fromToken.address,
             requiredAllowance
         );
@@ -229,7 +217,6 @@ const PHARAOHSwapPanel = () => {
         handleTransactionResult(result, "Token approval");
     };
 
-    // Helper function for consistent transaction result handling
     const handleTransactionResult = (
         result: { success: boolean; txHash?: string },
         operation: "Swap" | "Token approval"
@@ -292,28 +279,34 @@ const PHARAOHSwapPanel = () => {
         return retrivedToken;
     }
 
-    const generatePairKey = (tokenA: string, tokenB: string, stable: boolean): string => {
-        // Sort addresses to ensure consistent key regardless of order
+    const generatePairKey = (tokenA: string, tokenB: string, stable: boolean, version: PharaohVersion): string => {
         const sortedTokens = [tokenA.toLowerCase(), tokenB.toLowerCase()].sort();
-        return `${sortedTokens[0]},${sortedTokens[1]},${stable}`;
+        return `${sortedTokens[0]},${sortedTokens[1]},${stable},${version}`;
     };
 
     const checkAndCachePairAddress = async (tokenInAddress: string, tokenOutAddress: string, stable: boolean): Promise<void> => {
         const adjustedTokenIn = WrapUtils.normalizeAddress(tokenInAddress);
         const adjustedTokenOut = WrapUtils.normalizeAddress(tokenOutAddress);
-        const pairKey = generatePairKey(adjustedTokenIn, adjustedTokenOut, stable);
+        const pairKey = generatePairKey(adjustedTokenIn, adjustedTokenOut, stable, pharaohVersion);
         if (pairMap.has(pairKey)) {
             const cachedAddress = pairMap.get(pairKey)!;
             setCurrentPairAddress(cachedAddress);
             setCurrentPairExists(cachedAddress !== '');
             return;
         }
-        const fetchedPairAddress = await getPairAddressFor(adjustedTokenIn, adjustedTokenOut, stable);
-        const pairExists = fetchedPairAddress !== null;
-        const addressToStore = pairExists ? fetchedPairAddress : '';
-        setPairMap(prev => new Map(prev.set(pairKey, addressToStore)));
-        setCurrentPairAddress(addressToStore);
-        setCurrentPairExists(pairExists);
+        try {
+            const fetchedPairAddress = await getPairAddressFor(adjustedTokenIn, adjustedTokenOut, stable, pharaohVersion);
+            const pairExists = fetchedPairAddress !== null;
+            const addressToStore = pairExists ? fetchedPairAddress : '';
+            setPairMap(prev => new Map(prev.set(pairKey, addressToStore)));
+            setCurrentPairAddress(addressToStore);
+            setCurrentPairExists(pairExists);
+        } catch (error) {
+            console.error("Error checking pair address:", error);
+            // Keep existing state instead of breaking
+            setCurrentPairExists(true);
+            setCurrentPairAddress('');
+        }
     };
 
     const getRequiredAllowance = () => {
@@ -343,7 +336,6 @@ const PHARAOHSwapPanel = () => {
     };
 
     useEffect(() => {
-        // if to or from token changed to same token, force update using last token
         if (fromToken === toToken) {
             if (wasFromLastChanged) {
                 setLastToToken(toToken);
@@ -366,10 +358,15 @@ const PHARAOHSwapPanel = () => {
     useEffect(() => {
         const getOutputAmount = async () => {
             if (WrapUtils.isWrapOperation(fromToken, toToken) && fromAmount.gt(new BN(0))) {
-                setToAmountInputValue(formatBN(fromAmount, 18)); // always 18 for WAVAX or AVAX
+                setToAmountInputValue(formatBN(fromAmount, 18));
                 setAmountOutComputed(fromAmount);
             } else if (fromAmount.gt(new BN(0))) {
-                const result = await getAmountOut(fromToken.address === "0xAVAX" ? WAVAX_ADDRESS.toString() : fromToken.address, toToken.address === "0xAVAX" ? WAVAX_ADDRESS.toString() : toToken.address, fromAmount);
+                const result = await getAmountOut(
+                    fromToken.address === "0xAVAX" ? WAVAX_ADDRESS.toString() : fromToken.address,
+                    toToken.address === "0xAVAX" ? WAVAX_ADDRESS.toString() : toToken.address,
+                    fromAmount,
+                    pharaohVersion
+                );
                 if (result?.amountOut !== null) {
                     setToAmountInputValue(formatBN(result.amountOut, toToken.decimals));
                     setAmountOutComputed(result.amountOut);
@@ -386,19 +383,15 @@ const PHARAOHSwapPanel = () => {
         if (isFromAmountExact) {
             getOutputAmount();
         }
-    }, [fromAmount, toToken, fromToken]);
+    }, [fromAmount, toToken, fromToken, pharaohVersion]);
 
     useEffect(() => {
         const getInAmount = async () => {
             if (WrapUtils.isWrapOperation(fromToken, toToken) && toAmount.gt(new BN(0))) {
-                setFromAmountInputValue(formatBN(toAmount, 18)); // always 18 for WAVAX or AVAX
+                setFromAmountInputValue(formatBN(toAmount, 18));
                 setAmountInComputed(toAmount);
             } else if (toAmount.gt(new BN(0))) {
-                // const amountIn = await getAmountIn(fromToken.address === "0xAVAX" ? WAVAX_ADDRESS.toString() : fromToken.address, toToken.address === "0xAVAX" ? WAVAX_ADDRESS.toString() : toToken.address, toAmount, useStablePool);
-                // if (amountIn !== null) {
-                //     setFromAmountInputValue(formatBN(amountIn, fromToken.decimals));
-                //     setAmountInComputed(amountIn);
-                // }
+                // getAmountIn not implemented for Pharaoh
             } else {
                 setFromAmount(new BN(0));
                 setFromAmountInputValue('');
@@ -410,7 +403,7 @@ const PHARAOHSwapPanel = () => {
         if (!isFromAmountExact) {
             getInAmount();
         }
-    }, [toAmount, toToken, fromToken]);
+    }, [toAmount, toToken, fromToken, pharaohVersion]);
 
     useEffect(() => {
         const getFromTokenAllowance = async () => {
@@ -418,7 +411,7 @@ const PHARAOHSwapPanel = () => {
 
             const needsAllowanceCheck = fromAmount.gt(new BN(0)) || amountInComputed.gt(new BN(0));
             if (WrapUtils.needsAllowance(fromToken.address) && needsAllowanceCheck) {
-                const allowance = await getERC20Allowance(account.address, PHARAOH_ROUTER_ADDRESS, fromToken.address);
+                const allowance = await getERC20Allowance(account.address, routerAddress, fromToken.address);
                 if (allowance !== null) {
                     setFromTokenAllowance(allowance);
                 }
@@ -427,7 +420,7 @@ const PHARAOHSwapPanel = () => {
             }
         };
         getFromTokenAllowance();
-    }, [account, fromAmount, fromToken, refresh]);
+    }, [account, fromAmount, fromToken, refresh, pharaohVersion]);
 
     useEffect(() => {
         if (account.balances) {
@@ -459,7 +452,7 @@ const PHARAOHSwapPanel = () => {
         } else {
             checkAndCachePairAddress(fromToken.address, toToken.address, useStablePool);
         }
-    }, [fromToken, toToken, useStablePool, pairMap]);
+    }, [fromToken, toToken, useStablePool, pairMap, pharaohVersion]);
 
     return (
         <div className='flex flex-col gap-1 items-center justify-start'>
@@ -467,6 +460,25 @@ const PHARAOHSwapPanel = () => {
                 <Card className='card swap-card'>
                     <CardContent className='swap-card-content pb-0'>
                         <div className='flex-1 flex flex-col px-3'>
+                            {/* V1/V2 Version Tabs */}
+                            <div className='flex justify-end pt-2 pb-1'>
+                                <Tabs value={pharaohVersion} onValueChange={handleVersionChange} className="w-auto">
+                                    <TabsList className="h-7 p-0.5 bg-gray-100 dark:bg-dark-3">
+                                        <TabsTrigger
+                                            value="v1"
+                                            className="h-6 px-3 text-xs font-medium data-[state=active]:bg-white dark:data-[state=active]:bg-dark-2 data-[state=active]:shadow-sm"
+                                        >
+                                            V1
+                                        </TabsTrigger>
+                                        <TabsTrigger
+                                            value="v2"
+                                            className="h-6 px-3 text-xs font-medium data-[state=active]:bg-white dark:data-[state=active]:bg-dark-2 data-[state=active]:shadow-sm"
+                                        >
+                                            V2
+                                        </TabsTrigger>
+                                    </TabsList>
+                                </Tabs>
+                            </div>
                             <div className='flex-1 flex flex-row p-2 pb-0 items-center'>
                                 <Input
                                     type="number"
@@ -560,7 +572,7 @@ const PHARAOHSwapPanel = () => {
                                 >
                                     {getButtonText()}
                                 </Button>
-                                <SwapInfo routerAddress={PHARAOH_ROUTER_ADDRESS} pairAddress={currentPairExists ? currentPairAddress : undefined} includeType={true} pairType={getPairType()} mainSiteLink='https://www.phar.gg/trade'/>
+                                <SwapInfo routerAddress={routerAddress} pairAddress={currentPairExists && currentPairAddress !== '' ? currentPairAddress : undefined} includeType={true} pairType={getPairType()} mainSiteLink={pharaohVersion === "v2" ? 'https://www.phar.gg/trade' : "https://pharaoh.exchange/swap"} />
                             </div>
 
                         </div>

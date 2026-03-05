@@ -1,16 +1,32 @@
 import { readContract, writeContract } from "@wagmi/core";
 import BN from "bn.js";
 import {
-  PHARAOH_ROUTER_ADDRESS,
+  PHARAOH_ROUTER_ADDRESS_V1,
+  PHARAOH_ROUTER_ADDRESS_V2,
   PHARAOH_ROUTER_ABI,
   WAVAX_ADDRESS,
-  PHARAOH_FACTORY_ADDRESS,
+  PHARAOH_FACTORY_ADDRESS_V1,
+  PHARAOH_FACTORY_ADDRESS_V2,
   PHARAOH_FACTORY_ABI,
 } from "@/lib/constants";
 import { web3Config } from "@/context/Web3Context";
 import { waitForWagmiTxReceipt } from "./tx";
 
+export type PharaohVersion = "v1" | "v2";
+
 const DEADLINE_SECONDS = 300;
+
+export function getRouterAddress(version: PharaohVersion): string {
+  return version === "v1"
+    ? PHARAOH_ROUTER_ADDRESS_V1
+    : PHARAOH_ROUTER_ADDRESS_V2;
+}
+
+export function getFactoryAddress(version: PharaohVersion): string {
+  return version === "v1"
+    ? PHARAOH_FACTORY_ADDRESS_V1
+    : PHARAOH_FACTORY_ADDRESS_V2;
+}
 
 export async function createSwapTransaction(
   accountAddress: string,
@@ -21,7 +37,8 @@ export async function createSwapTransaction(
   amountOut: BN,
   slippage: number,
   stable: boolean,
-  supportFee: boolean
+  supportFee: boolean,
+  version: PharaohVersion = "v2"
 ): Promise<{
   success: boolean;
   txHash?: string;
@@ -29,6 +46,7 @@ export async function createSwapTransaction(
 }> {
   const now = Math.floor(Date.now() / 1000);
   const deadline = now + DEADLINE_SECONDS;
+  const routerAddress = getRouterAddress(version);
 
   try {
     let method: string;
@@ -106,7 +124,7 @@ export async function createSwapTransaction(
     }
 
     const txHash = await writeContract(web3Config, {
-      address: PHARAOH_ROUTER_ADDRESS,
+      address: routerAddress as `0x${string}`,
       abi: PHARAOH_ROUTER_ABI,
       functionName: method,
       args,
@@ -129,14 +147,16 @@ export async function createSwapTransaction(
 export const getAmountOut = async (
   tokenInAddress: string,
   tokenOutAddress: string,
-  tokenInAmount: BN
+  tokenInAmount: BN,
+  version: PharaohVersion = "v2"
 ): Promise<{ amountOut: BN | null; stable: boolean }> => {
   let amountOut: BN | null = null;
-  let stable = false; // Default to false, can be set based on user preference
+  let stable = false;
+  const routerAddress = getRouterAddress(version);
+
   try {
-    // Get quote from router
     const quoteResult = await readContract(web3Config, {
-      address: PHARAOH_ROUTER_ADDRESS as `0x${string}`,
+      address: routerAddress as `0x${string}`,
       abi: PHARAOH_ROUTER_ABI,
       functionName: "getAmountOut",
       args: [
@@ -161,12 +181,14 @@ export const getAmountOut = async (
 export const getPairAddressFor = async (
   tokenInAddress: string,
   tokenOutAddress: string,
-  stable: boolean
+  stable: boolean,
+  version: PharaohVersion = "v2"
 ): Promise<string | null> => {
+  const factoryAddress = getFactoryAddress(version);
+
   try {
-    // Get pair address from factory
     const pairContractAddress = await readContract(web3Config, {
-      address: PHARAOH_FACTORY_ADDRESS as `0x${string}`,
+      address: factoryAddress as `0x${string}`,
       abi: PHARAOH_FACTORY_ABI,
       functionName: "getPair",
       args: [tokenInAddress, tokenOutAddress, stable],
@@ -184,85 +206,3 @@ export const getPairAddressFor = async (
   }
   return null;
 };
-
-// export const getAmountIn = async (
-//   tokenInAddress: string,
-//   tokenOutAddress: string,
-//   tokenOutAmount: BN,
-//   stable: boolean
-// ): Promise<BN | null> => {
-//   let amountIn: BN | null = null;
-//   const tokens = [tokenInAddress, tokenOutAddress].sort((a, b) =>
-//     a.toLowerCase().localeCompare(b.toLowerCase())
-//   );
-
-//   try {
-//     // Get pair address from factory
-//     const pairContractAddress = await readContract(web3Config, {
-//       address: PHARAOH_FACTORY_ADDRESS as `0x${string}`,
-//       abi: PHARAOH_FACTORY_ABI,
-//       functionName: "getPair",
-//       args: [tokenInAddress, tokenOutAddress, stable],
-//     });
-
-//     if (
-//       !pairContractAddress ||
-//       pairContractAddress === "0x0000000000000000000000000000000000000000"
-//     ) {
-//       throw new Error("Error: getAmountIn() could not retrieve pair address!");
-//     }
-
-//     const pairAddress = pairContractAddress.toString();
-
-//     // Get reserves from pair contract
-//     const reserveResult = await readContract(web3Config, {
-//       address: pairAddress as `0x${string}`,
-//       abi: PHARAOH_PAIR_ABI,
-//       functionName: "getReserves",
-//     });
-
-//     if (
-//       !reserveResult ||
-//       !Array.isArray(reserveResult) ||
-//       reserveResult.length < 3
-//     ) {
-//       throw new Error("Error: getAmountIn() could not retrieve pair reserves!");
-//     }
-
-//     const reserve0 = new BN(reserveResult[0].toString());
-//     const reserve1 = new BN(reserveResult[1].toString());
-//     //const last = Number(reserveResult[2]);
-
-//     // Determine which reserve is for which token
-//     let reserveIn: BN, reserveOut: BN;
-//     if (tokens[0].toLowerCase() === tokenInAddress.toLowerCase()) {
-//       reserveIn = reserve0;
-//       reserveOut = reserve1;
-//     } else {
-//       reserveIn = reserve1;
-//       reserveOut = reserve0;
-//     }
-
-//     // Get quote from router
-//     const quoteResult = await readContract(web3Config, {
-//       address: PHARAOH_ROUTER_ADDRESS as `0x${string}`,
-//       abi: PHARAOH_ROUTER_ABI,
-//       functionName: "getAmountIn",
-//       args: [
-//         tokenOutAmount.toString(),
-//         reserveIn.toString(),
-//         reserveOut.toString(),
-//       ],
-//     });
-
-//     if (quoteResult) {
-//       amountIn = new BN(quoteResult.toString());
-//     } else {
-//       throw new Error("Error: getAmountIn() could not retrieve quote!");
-//     }
-//   } catch (error) {
-//     console.log(error);
-//   }
-
-//   return amountIn;
-// };

@@ -40,7 +40,7 @@ const Home = () => {
                     {/* Text overlay - separate from background */}
                     <div className="absolute inset-0 flex items-center justify-center z-30">
                         <span className="text-white font-bold text-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                            Use PHARAOH v1
+                            Use PHARAOH v1 and v2
                         </span>
                     </div>
                 </Link>
@@ -60,7 +60,7 @@ const Home = () => {
                     {/* Text overlay - separate from background */}
                     <div className="absolute inset-0 flex items-center justify-center z-30">
                         <span className="text-white font-bold text-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                            Use Arena.Trade v1
+                            Use ArenaTrade v1
                         </span>
                     </div>
                 </Link>

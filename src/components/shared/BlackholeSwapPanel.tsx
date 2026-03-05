@@ -522,20 +522,20 @@ const BlackholeSwapPanel = () => {
                                             <FaCog className='text-gray-400 text-sm ml-1 hover:cursor-pointer' />
                                         </PopoverTrigger>
                                         <PopoverContent align='start' alignOffset={-10} side='bottom' sideOffset={14} className='bg-white dark:bg-dark-2 border-0 shadow-lg duration-300'>
-                                            <div className='flex flex-col gap-2 bg-white dark:bg-dark-2 items-center justify-center'>
-                                                <div className='flex flex-row gap-2 items-center justify-between'>
+                                            <div className='flex flex-col gap-2 bg-white dark:bg-dark-2'>
+                                                <div className='flex flex-row gap-2 items-center'>
                                                     <Switch
                                                         className={supportFeeTokens ? "bg-cash-green" : "bg-error-red"}
                                                         checked={supportFeeTokens}
                                                         onCheckedChange={setSupportFeeTokens} />
-                                                    <span> Support Fee/Reflection Tokens</span>
+                                                    <span>Support Fee/Reflection Tokens</span>
                                                 </div>
-                                                <div className='flex flex-row gap-2 items-center justify-between'>
-                                                    <Switch 
+                                                <div className='flex flex-row gap-2 items-center'>
+                                                    <Switch
                                                         className={useStablePool ? "bg-cash-green" : "bg-error-red"}
                                                         checked={useStablePool}
                                                         onCheckedChange={setUseStablePool} />
-                                                    <span> Use Stable Pool Pair</span>
+                                                    <span>Use Stable Pool Pair</span>
                                                 </div>
                                             </div>
                                         </PopoverContent>

@@ -1270,8 +1270,10 @@ export const LFJ_PAIR_ABI = [
 ];
 
 // PHARAOH CONTRACTS
-export const PHARAOH_ROUTER_ADDRESS =
+export const PHARAOH_ROUTER_ADDRESS_V1 =
   "0xAAA45c8F5ef92a000a121d102F4e89278a711Faa";
+
+export const PHARAOH_ROUTER_ADDRESS_V2 = "0x9CEE04bDcE127DA7E448A333f006DEFb3d5e38cC";
 
 export const PHARAOH_ROUTER_ABI = [
   { inputs: [], stateMutability: "nonpayable", type: "constructor" },
@@ -1793,8 +1795,10 @@ export const PHARAOH_ROUTER_ABI = [
   { stateMutability: "payable", type: "receive" },
 ];
 
-export const PHARAOH_FACTORY_ADDRESS =
+export const PHARAOH_FACTORY_ADDRESS_V1 =
   "0xAAA16c016BF556fcD620328f0759252E29b1AB57";
+
+export const PHARAOH_FACTORY_ADDRESS_V2 = "0x85448bF2F589ab1F56225DF5167c63f57758f8c1";
 
 export const PHARAOH_FACTORY_ABI = [
   { inputs: [], stateMutability: "nonpayable", type: "constructor" },
